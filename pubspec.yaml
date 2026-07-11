@@ -1,0 +1,55 @@
+name: khatabook_whatsapp
+description: "KhataBook WhatsApp - Lena Hai / Dena Hai ledger app for small businesses"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # State management
+  provider: ^6.1.2
+
+  # Local offline-first database
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
+  # PDF generation + printing/sharing
+  pdf: ^3.11.1
+  printing: ^5.13.3
+
+  # Share PDF / text to WhatsApp etc.
+  share_plus: ^10.0.2
+
+  # Launch whatsapp:// URLs directly
+  url_launcher: ^6.3.0
+
+  # File system paths for saving generated PDFs
+  path_provider: ^2.1.4
+
+  # Date formatting
+  intl: ^0.19.0
+
+  # Unique ids for records
+  uuid: ^4.4.2
+
+  # Optional: attach payment screenshot
+  image_picker: ^1.1.2
+
+  # Runtime permissions (contacts, storage)
+  permission_handler: ^11.3.1
+
+  # Pick customer directly from phone contacts
+  flutter_contacts: ^1.1.9+2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
