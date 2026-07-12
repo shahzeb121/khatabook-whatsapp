@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "931830069944",
+    "project_id": "khatabook-whatsapp",
+    "storage_bucket": "khatabook-whatsapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:931830069944:android:1408c8e374fe99c6a0524d",
+        "android_client_info": {
+          "package_name": "com.khatabook.whatsapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzIDy2E9Ce_16EH3bWb8Wnkdv3v3zg8uU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
