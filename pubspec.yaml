@@ -46,6 +46,11 @@ dependencies:
   # Pick customer directly from phone contacts
   flutter_contacts: ^1.1.9+2
 
+  # Firebase - cloud login (OTP) + client activation registry
+  firebase_core: ^4.4.0
+  firebase_auth: ^6.1.2
+  cloud_firestore: ^6.4.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

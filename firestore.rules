@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Each shop's account doc lives at /users/{their auth uid}.
+    match /users/{userId} {
+      // A shop can only ever read its own account doc.
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      // A shop can create its OWN doc on first login, but only ever as
+      // inactive - it can never set itself active.
+      allow create: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.data.isActive == false;
+
+      // A shop can update its own doc (e.g. shopName) but can NEVER
+      // change the isActive field itself - only the admin can do that,
+      // via the Firebase console (which bypasses these rules entirely).
+      allow update: if request.auth != null
+                    && request.auth.uid == userId
+                    && request.resource.data.isActive == resource.data.isActive;
+
+      allow delete: if false;
+    }
+  }
+}

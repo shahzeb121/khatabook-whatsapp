@@ -1,8 +1,9 @@
 import 'package:hive/hive.dart';
 
 /// Single settings object for the shop (there's only ever one of these).
-/// Holds shop details printed on Invoice/Ledger PDFs, the shop logo, and
-/// the simple local login PIN.
+/// Holds shop details printed on Invoice/Ledger PDFs, the shop logo, the
+/// simple local app-lock PIN, and a cached copy of the cloud account status
+/// (so the app can still open offline after the first successful check).
 class ShopSettings {
   String shopName;
   String phone;
@@ -10,7 +11,9 @@ class ShopSettings {
   String easypaisaNumber;
   String jazzcashNumber;
   String? logoPath; // local file path to picked logo image
-  String? pin; // 4-digit local login PIN. null = no login set up yet.
+  String? pin; // 4-digit local app-lock PIN. null = no lock set up yet.
+  String? loginPhone; // the phone number this account registered with (cloud)
+  bool cloudActive; // cached "is this account activated by admin" flag
 
   ShopSettings({
     this.shopName = "Meri Dukaan",
@@ -20,6 +23,8 @@ class ShopSettings {
     this.jazzcashNumber = "",
     this.logoPath,
     this.pin,
+    this.loginPhone,
+    this.cloudActive = false,
   });
 
   bool get isPinSet => pin != null && pin!.isNotEmpty;
@@ -44,13 +49,15 @@ class ShopSettingsAdapter extends TypeAdapter<ShopSettings> {
       jazzcashNumber: fields[4] as String? ?? "",
       logoPath: fields[5] as String?,
       pin: fields[6] as String?,
+      loginPhone: fields[7] as String?,
+      cloudActive: fields[8] as bool? ?? false,
     );
   }
 
   @override
   void write(BinaryWriter writer, ShopSettings obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.shopName)
       ..writeByte(1)
@@ -64,6 +71,10 @@ class ShopSettingsAdapter extends TypeAdapter<ShopSettings> {
       ..writeByte(5)
       ..write(obj.logoPath)
       ..writeByte(6)
-      ..write(obj.pin);
+      ..write(obj.pin)
+      ..writeByte(7)
+      ..write(obj.loginPhone)
+      ..writeByte(8)
+      ..write(obj.cloudActive);
   }
 }

@@ -3,6 +3,8 @@ plugins {
     id "org.jetbrains.kotlin.android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
+    // Reads android/app/google-services.json for Firebase.
+    id "com.google.gms.google-services"
 }
 
 android {
@@ -22,7 +24,9 @@ android {
     defaultConfig {
         // Unique Application ID for this app (change before publishing to Play Store).
         applicationId "com.khatabook.whatsapp"
-        minSdk 21
+        // Firebase requires 23+; using 26 (Android 8.0+) also avoids needing
+        // Java 8 desugaring config. Covers the vast majority of phones in use.
+        minSdk 26
         targetSdk flutter.targetSdkVersion
         versionCode flutter.versionCode
         versionName flutter.versionName
