@@ -14,7 +14,7 @@ import 'services/sample_data_service.dart';
 import 'services/auth_service.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_shell.dart';
-import 'screens/phone_login_screen.dart';
+import 'screens/google_sign_in_screen.dart';
 import 'screens/pending_approval_screen.dart';
 import 'utils/constants.dart';
 
@@ -59,7 +59,7 @@ class KhataBookApp extends StatelessWidget {
 }
 
 /// Decides which screen to show at app start:
-/// 1. No cloud account yet (never verified a phone) -> PhoneLoginScreen
+/// 1. No cloud account yet (never signed in with Google) -> GoogleSignInScreen
 /// 2. Cloud account exists but not yet activated by admin -> PendingApprovalScreen
 /// 3. Cloud account active -> local PIN gate (LoginScreen) -> MainShell
 ///
@@ -75,7 +75,7 @@ class AuthGate extends StatefulWidget {
 class _AuthGateState extends State<AuthGate> {
   final _authService = AuthService();
   bool _checking = true;
-  bool _needsPhoneLogin = false;
+  bool _needsSignIn = false;
   bool _pendingApproval = false;
 
   @override
@@ -90,7 +90,7 @@ class _AuthGateState extends State<AuthGate> {
 
     if (user == null) {
       setState(() {
-        _needsPhoneLogin = true;
+        _needsSignIn = true;
         _checking = false;
       });
       return;
@@ -100,7 +100,7 @@ class _AuthGateState extends State<AuthGate> {
     bool active = provider.shopSettings.cloudActive;
     try {
       active = await _authService.checkActiveStatus(user.uid);
-      await provider.setCloudActive(active, phone: user.phoneNumber);
+      await provider.setCloudActive(active, email: user.email);
     } catch (_) {
       // No internet right now - fall back to the cached value above.
     }
@@ -119,8 +119,8 @@ class _AuthGateState extends State<AuthGate> {
         body: Center(child: CircularProgressIndicator(color: Colors.white)),
       );
     }
-    if (_needsPhoneLogin) {
-      return const PhoneLoginScreen();
+    if (_needsSignIn) {
+      return const GoogleSignInScreen();
     }
     if (_pendingApproval) {
       return const PendingApprovalScreen();

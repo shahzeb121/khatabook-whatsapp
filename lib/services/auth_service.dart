@@ -1,52 +1,49 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Wraps Firebase Phone Auth (OTP login) and the "users" collection in
+/// IMPORTANT - replace this placeholder with your Firebase project's
+/// "Web client ID". Find it at:
+/// Firebase Console -> Authentication -> Sign-in method -> Google ->
+/// (after enabling it) "Web SDK configuration" -> Web client ID.
+/// It looks like: 123456789-abc123.apps.googleusercontent.com
+const String kGoogleWebClientId = "REPLACE_WITH_YOUR_WEB_CLIENT_ID.apps.googleusercontent.com";
+
+/// Wraps Google Sign-In + Firebase Auth, and the "users" collection in
 /// Firestore, which acts as the client registry for the SaaS: every shop
-/// that registers gets one document here, with an `isActive` flag that
+/// that signs in gets one document here, with an `isActive` flag that
 /// only the admin (via the Firebase console) can flip to true/false.
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  bool _googleSignInReady = false;
 
   User? get currentUser => _auth.currentUser;
 
-  /// Starts the OTP flow. Calls [onCodeSent] with a verificationId once
-  /// the SMS has been sent, or [onError] if something went wrong.
-  /// [onAutoVerified] fires on some Android devices that auto-detect the
-  /// SMS code without the user typing it.
-  Future<void> sendOtp({
-    required String phone,
-    required void Function(String verificationId) onCodeSent,
-    required void Function(String message) onError,
-    required void Function(UserCredential credential) onAutoVerified,
-  }) async {
-    await _auth.verifyPhoneNumber(
-      phoneNumber: phone,
-      timeout: const Duration(seconds: 60),
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        final result = await _auth.signInWithCredential(credential);
-        onAutoVerified(result);
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        onError(e.message ?? "OTP bhejne mein masla hua. Number check karein.");
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        onCodeSent(verificationId);
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {},
-    );
+  Future<void> _ensureGoogleSignInReady() async {
+    if (_googleSignInReady) return;
+    await _googleSignIn.initialize(serverClientId: kGoogleWebClientId);
+    _googleSignInReady = true;
   }
 
-  /// Verifies the 6-digit code the user typed in.
-  Future<User?> verifyOtp({
-    required String verificationId,
-    required String smsCode,
-  }) async {
-    final credential = PhoneAuthProvider.credential(
-      verificationId: verificationId,
-      smsCode: smsCode,
-    );
+  /// Signs the user in with their Google account and links it to Firebase.
+  /// Returns the signed-in Firebase user, or null if they cancelled.
+  Future<User?> signInWithGoogle() async {
+    await _ensureGoogleSignInReady();
+
+    if (!_googleSignIn.supportsAuthenticate()) {
+      throw Exception("Is device par Google Sign-In supported nahi hai.");
+    }
+
+    final GoogleSignInAccount account = await _googleSignIn.authenticate();
+    final GoogleSignInAuthentication auth = account.authentication;
+    final idToken = auth.idToken;
+    if (idToken == null) {
+      throw Exception("Google se login token nahi mila. Dubara koshish karein.");
+    }
+
+    final credential = GoogleAuthProvider.credential(idToken: idToken);
     final result = await _auth.signInWithCredential(credential);
     return result.user;
   }
@@ -58,7 +55,8 @@ class AuthService {
     final doc = await docRef.get();
     if (!doc.exists) {
       await docRef.set({
-        'phone': user.phoneNumber,
+        'email': user.email,
+        'displayName': user.displayName,
         'shopName': shopNameHint,
         'isActive': false,
         'createdAt': FieldValue.serverTimestamp(),
@@ -76,5 +74,12 @@ class AuthService {
     return (doc.data()?['isActive'] as bool?) ?? false;
   }
 
-  Future<void> signOut() => _auth.signOut();
+  Future<void> signOut() async {
+    try {
+      await _googleSignIn.signOut();
+    } catch (_) {
+      // ignore - not critical if this side fails
+    }
+    await _auth.signOut();
+  }
 }

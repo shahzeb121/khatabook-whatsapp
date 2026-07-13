@@ -6,11 +6,11 @@ import '../services/auth_service.dart';
 import '../utils/constants.dart';
 import '../widgets/big_button.dart';
 import 'login_screen.dart';
-import 'phone_login_screen.dart';
+import 'google_sign_in_screen.dart';
 
-/// Shown when a shop has registered (verified their phone) but the admin
-/// hasn't flipped their account to active yet. They can tap "Check Again"
-/// once they've been approved.
+/// Shown when a shop has signed in (verified their Google account) but the
+/// admin hasn't flipped their account to active yet. They can tap
+/// "Check Again" once they've been approved.
 class PendingApprovalScreen extends StatefulWidget {
   const PendingApprovalScreen({super.key});
 
@@ -58,14 +58,14 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
     if (!mounted) return;
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (_) => const PhoneLoginScreen()),
+      MaterialPageRoute(builder: (_) => const GoogleSignInScreen()),
       (route) => false,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final phone = context.watch<AppDataProvider>().shopSettings.loginPhone ?? "";
+    final email = context.watch<AppDataProvider>().shopSettings.loginEmail ?? "";
 
     return Scaffold(
       backgroundColor: AppColors.primaryGreen,
@@ -90,7 +90,7 @@ class _PendingApprovalScreenState extends State<PendingApprovalScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  "Aapka account ($phone) register ho gaya hai.\nHumari team jald hi ise activate kar degi.",
+                  "Aapka account ($email) register ho gaya hai.\nHumari team jald hi ise activate kar degi.",
                   style: const TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
                   textAlign: TextAlign.center,
                 ),

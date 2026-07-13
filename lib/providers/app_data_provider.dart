@@ -68,10 +68,10 @@ class AppDataProvider extends ChangeNotifier {
 
   /// Called after checking Firestore - caches the result locally so the
   /// app can still open offline once a client has been activated at least once.
-  Future<void> setCloudActive(bool active, {String? phone}) async {
+  Future<void> setCloudActive(bool active, {String? email}) async {
     final settings = shopSettings;
     settings.cloudActive = active;
-    if (phone != null) settings.loginPhone = phone;
+    if (email != null) settings.loginEmail = email;
     await saveShopSettings(settings);
   }
 

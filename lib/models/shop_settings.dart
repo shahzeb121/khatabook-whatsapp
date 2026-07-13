@@ -12,7 +12,7 @@ class ShopSettings {
   String jazzcashNumber;
   String? logoPath; // local file path to picked logo image
   String? pin; // 4-digit local app-lock PIN. null = no lock set up yet.
-  String? loginPhone; // the phone number this account registered with (cloud)
+  String? loginEmail; // the Google account email this account signed in with
   bool cloudActive; // cached "is this account activated by admin" flag
 
   ShopSettings({
@@ -23,7 +23,7 @@ class ShopSettings {
     this.jazzcashNumber = "",
     this.logoPath,
     this.pin,
-    this.loginPhone,
+    this.loginEmail,
     this.cloudActive = false,
   });
 
@@ -49,7 +49,7 @@ class ShopSettingsAdapter extends TypeAdapter<ShopSettings> {
       jazzcashNumber: fields[4] as String? ?? "",
       logoPath: fields[5] as String?,
       pin: fields[6] as String?,
-      loginPhone: fields[7] as String?,
+      loginEmail: fields[7] as String?,
       cloudActive: fields[8] as bool? ?? false,
     );
   }
@@ -73,7 +73,7 @@ class ShopSettingsAdapter extends TypeAdapter<ShopSettings> {
       ..writeByte(6)
       ..write(obj.pin)
       ..writeByte(7)
-      ..write(obj.loginPhone)
+      ..write(obj.loginEmail)
       ..writeByte(8)
       ..write(obj.cloudActive);
   }
