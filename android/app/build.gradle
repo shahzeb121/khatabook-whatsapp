@@ -1,9 +1,3 @@
-def keystorePropertiesFile = rootProject.file("key.properties")
-def keystoreProperties = new Properties()
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-}
-
 plugins {
     id "com.android.application"
     id "org.jetbrains.kotlin.android"
@@ -11,6 +5,12 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
     // Reads android/app/google-services.json for Firebase.
     id "com.google.gms.google-services"
+}
+
+def keystorePropertiesFile = rootProject.file("key.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
 android {
@@ -28,10 +28,7 @@ android {
     }
 
     defaultConfig {
-        // Unique Application ID for this app (change before publishing to Play Store).
         applicationId "com.khatabook.whatsapp"
-        // Firebase requires 23+; using 26 (Android 8.0+) also avoids needing
-        // Java 8 desugaring config. Covers the vast majority of phones in use.
         minSdk 26
         targetSdk flutter.targetSdkVersion
         versionCode flutter.versionCode
@@ -51,10 +48,6 @@ android {
 
     buildTypes {
         release {
-            // Uses our permanent release key (so the app's SHA-1 fingerprint
-            // stays fixed across builds, required for Google Sign-In).
-            // Falls back to the debug key only if key.properties is missing
-            // (e.g. a local build where secrets weren't set up).
             signingConfig keystorePropertiesFile.exists() ? signingConfigs.release : signingConfigs.debug
         }
     }
