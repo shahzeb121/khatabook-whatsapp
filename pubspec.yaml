@@ -11,31 +11,46 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.8
 
+  # State management
   provider: ^6.1.2
 
+  # Local offline-first database
   hive: ^2.2.3
   hive_flutter: ^1.1.0
 
+  # PDF generation + printing/sharing
   pdf: ^3.11.1
   printing: ^5.13.3
 
+  # Share PDF / text to WhatsApp etc.
   share_plus: ^10.0.2
 
+  # Launch whatsapp:// URLs directly
   url_launcher: ^6.3.0
 
+  # File system paths for saving generated PDFs
   path_provider: ^2.1.4
 
+  # Date formatting
   intl: ^0.19.0
 
+  # Unique ids for records
   uuid: ^4.4.2
 
+  # Optional: attach payment screenshot
   image_picker: ^1.1.2
 
+  # Runtime permissions (contacts, storage)
   permission_handler: ^11.3.1
 
+  # Pick customer directly from phone contacts
   flutter_contacts: ^1.1.9+2
 
- firebase_core: ^3.7.0
+  # Firebase - cloud login (Google Sign-In) + client activation registry
+  # Pinned to a known-stable, well-established version set (not the very
+  # newest releases) since some recent Firebase package releases have had
+  # publishing bugs causing build failures.
+  firebase_core: ^3.7.0
   firebase_auth: ^5.3.0
   cloud_firestore: ^5.4.0
   google_sign_in: ^6.2.1
