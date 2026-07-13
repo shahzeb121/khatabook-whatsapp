@@ -35,10 +35,10 @@ dependencies:
 
   flutter_contacts: ^1.1.9+2
 
-  firebase_core: any
-  firebase_auth: any
-  cloud_firestore: any
-  google_sign_in: any
+ firebase_core: ^3.7.0
+  firebase_auth: ^5.3.0
+  cloud_firestore: ^5.4.0
+  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_test:
