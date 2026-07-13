@@ -14,6 +14,16 @@ jobs:
         with:
           channel: 'stable'
 
+      - name: Decode release keystore
+        run: echo "${{ secrets.KHATABOOK_KEYSTORE_BASE64 }}" | base64 --decode > android/khatabook-release.keystore
+
+      - name: Create key.properties
+        run: |
+          echo "storePassword=${{ secrets.KHATABOOK_STORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.KHATABOOK_KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=khatabook" >> android/key.properties
+          echo "storeFile=../khatabook-release.keystore" >> android/key.properties
+
       - run: flutter pub get
       - run: flutter build apk --release
 
